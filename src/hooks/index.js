@@ -4,4 +4,5 @@ export {
   useCooldown,
   useLogs,
   useTheme,
+  useAuth,
 } from "./useApp";

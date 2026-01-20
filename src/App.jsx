@@ -26,6 +26,7 @@ import {
   useCooldown,
   useLogs,
   useTheme,
+  useAuth,
 } from "@/hooks";
 import { SettingsModal, PreviewSection } from "@/components";
 
@@ -46,6 +47,9 @@ export default function App() {
   const { cooldownTime, setCooldownTime } = useCooldown();
   const { logs, addLog } = useLogs();
   const { isDark, toggleTheme } = useTheme();
+  const { isAuthenticated, login, requiresAuth } = useAuth();
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState(false);
   const THEME = getTheme(isDark);
 
   useEffect(() => {
@@ -693,6 +697,53 @@ export default function App() {
       </div>
     </div>
   );
+
+  const handleLogin = () => {
+    if (login(password)) {
+      setAuthError(false);
+    } else {
+      setAuthError(true);
+    }
+  };
+
+  if (requiresAuth && !isAuthenticated) {
+    return (
+      <div
+        className={`min-h-screen ${THEME.bg} ${THEME.text} font-sans flex items-center justify-center`}
+      >
+        <div
+          className={`${THEME.card} border ${THEME.border} rounded-2xl p-8 w-full max-w-sm shadow-xl`}
+        >
+          <div className="text-center mb-8">
+            <div className="bg-gradient-to-tr from-teal-400 to-emerald-500 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-500/20 text-white mx-auto mb-4">
+              <Sparkles size={28} fill="currentColor" />
+            </div>
+            <h1 className={`text-2xl font-bold ${THEME.text}`}>微微幻灯片</h1>
+            <p className={`${THEME.textMuted} mt-2`}>请输入访问密码</p>
+          </div>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+            placeholder="输入密码..."
+            className={`w-full px-4 py-3 rounded-xl ${THEME.bg} border ${authError ? "border-rose-500" : THEME.border} ${THEME.text} focus:outline-none focus:border-teal-500 transition-colors`}
+          />
+          {authError && (
+            <p className="text-rose-500 text-sm mt-2 flex items-center gap-1">
+              <AlertCircle size={14} /> 密码错误
+            </p>
+          )}
+          <button
+            onClick={handleLogin}
+            className={`w-full mt-4 ${THEME.accentBg} ${THEME.accentHover} text-white py-3 rounded-xl font-bold transition-all active:scale-95`}
+          >
+            进入
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

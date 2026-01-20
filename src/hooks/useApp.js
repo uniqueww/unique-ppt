@@ -2,14 +2,18 @@ import { useState, useEffect } from "react";
 import { DEFAULT_API_CONFIG } from "@/constants";
 
 let SECRET_CONFIG = null;
+let ACCESS_PASSWORD = null;
 try {
-  SECRET_CONFIG = require("@/constants/secret").SECRET_CONFIG;
+  const secret = require("@/constants/secret");
+  SECRET_CONFIG = secret.SECRET_CONFIG;
+  ACCESS_PASSWORD = secret.ACCESS_PASSWORD;
 } catch (e) {
   // secret.js 不存在时使用默认配置
 }
 
 const STORAGE_KEY = "uniquePpt_api_config";
 const THEME_KEY = "uniquePpt_theme";
+const AUTH_KEY = "uniquePpt_authenticated";
 
 const getDefaultConfig = () => {
   if (SECRET_CONFIG) {
@@ -32,6 +36,26 @@ const getDefaultConfig = () => {
   }
   return DEFAULT_API_CONFIG;
 };
+
+export function useAuth() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (!ACCESS_PASSWORD) return true;
+    return localStorage.getItem(AUTH_KEY) === "true";
+  });
+
+  const login = (password) => {
+    if (password === ACCESS_PASSWORD) {
+      setIsAuthenticated(true);
+      localStorage.setItem(AUTH_KEY, "true");
+      return true;
+    }
+    return false;
+  };
+
+  const requiresAuth = !!ACCESS_PASSWORD;
+
+  return { isAuthenticated, login, requiresAuth };
+}
 
 export function useTheme() {
   const [isDark, setIsDark] = useState(() => {
