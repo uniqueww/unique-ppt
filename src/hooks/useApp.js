@@ -1,15 +1,9 @@
 import { useState, useEffect } from "react";
 import { DEFAULT_API_CONFIG } from "@/constants";
+import * as secret from "@/constants/secret";
 
-let SECRET_CONFIG = null;
-let ACCESS_PASSWORD = null;
-try {
-  const secret = require("@/constants/secret");
-  SECRET_CONFIG = secret.SECRET_CONFIG;
-  ACCESS_PASSWORD = secret.ACCESS_PASSWORD;
-} catch (e) {
-  // secret.js 不存在时使用默认配置
-}
+const SECRET_CONFIG = secret.SECRET_CONFIG || null;
+const ACCESS_PASSWORD = secret.ACCESS_PASSWORD || null;
 
 const STORAGE_KEY = "uniquePpt_api_config";
 const THEME_KEY = "uniquePpt_theme";
