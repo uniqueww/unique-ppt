@@ -11,6 +11,9 @@ const AUTH_KEY = "uniquePpt_authenticated";
 
 const getDefaultConfig = () => {
   if (SECRET_CONFIG) {
+    const imageProvider = SECRET_CONFIG.image.provider || "openai";
+    const imageProtocol =
+      imageProvider === "gemini" ? "gemini_image" : "openai_image";
     return {
       text: {
         provider: SECRET_CONFIG.text.provider || "openai",
@@ -20,8 +23,8 @@ const getDefaultConfig = () => {
         apiKey: SECRET_CONFIG.text.apiKey || "",
       },
       image: {
-        provider: SECRET_CONFIG.image.provider || "openai",
-        protocol: "openai_image",
+        provider: imageProvider,
+        protocol: imageProtocol,
         baseUrl: SECRET_CONFIG.image.baseUrl || "",
         model: SECRET_CONFIG.image.model || "",
         apiKey: SECRET_CONFIG.image.apiKey || "",
